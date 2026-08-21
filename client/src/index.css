@@ -1,0 +1,30 @@
+:root {
+  --bg: #161B22;
+  --panel: #1E2530;
+  --border: #2A3240;
+  --text: #E8ECF1;
+  --text-dim: #8B95A5;
+  --accent-teal: #4FC1B0;
+  --accent-amber: #E8A24C;
+  --user-bubble: #2A3B44;
+  --bot-bubble: #1E2530;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+button { font-family: inherit; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
