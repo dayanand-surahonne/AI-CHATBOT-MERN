@@ -28,7 +28,7 @@ A modern conversational AI application built with **React, Node.js, Express.js, 
 
 <div align="center">
 
-![AI Chatbot](screenshots/AI-Chatbot.png)
+![AI Chatbot](AI-Chatbot.png)
 
 </div>
 
