@@ -15,6 +15,7 @@ A modern conversational AI application built with **React, Node.js, Express.js, 
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Google-Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?style=for-the-badge&logo=render&logoColor=black)
 
 <br/>
 
@@ -32,7 +33,7 @@ A modern conversational AI application built with **React, Node.js, Express.js, 
 
 </div>
 
-> The screenshot above shows the working AI Chatbot interface running locally with a Gemini-generated response.
+> The screenshot above shows the AI Chatbot interface with an AI-generated response.
 
 ---
 
@@ -72,15 +73,17 @@ The project demonstrates how a complete AI-powered web application can be design
 - Retrieves previous messages
 - Sends previous conversation context to the AI
 - Maintains conversation continuity
+- Session-based conversation storage
 
 ### 🛡️ Backend Features
 
 - Express REST API
 - Request validation
-- Rate limiting
+- API rate limiting
 - Centralized error handling
-- API timeout handling
+- AI API timeout handling
 - Environment-based configuration
+- HTTP-only session cookie
 
 ### 🔄 AI Provider Architecture
 
@@ -100,8 +103,8 @@ Google Gemini is configured as the primary AI provider.
 
 | Technology | Purpose |
 |---|---|
-| React | User Interface |
-| Vite | Frontend Build Tool |
+| React 18 | User Interface |
+| Vite 5 | Frontend Build Tool |
 | JavaScript | Application Logic |
 | CSS | UI Styling |
 
@@ -125,8 +128,8 @@ Google Gemini is configured as the primary AI provider.
 | Technology | Purpose |
 |---|---|
 | Google Gemini API | Primary AI Provider |
-| OpenAI API | Fallback Provider |
-| Groq API | Fallback Provider |
+| OpenAI API | AI Provider |
+| Groq API | AI Provider |
 
 ### Development Tools
 
@@ -136,6 +139,14 @@ Google Gemini is configured as the primary AI provider.
 | GitHub | Repository Hosting |
 | VS Code | Development |
 | npm | Package Management |
+
+### Deployment
+
+| Platform | Purpose |
+|---|---|
+| Render | Full-Stack Deployment |
+| MongoDB Atlas | Cloud Database |
+| GitHub | Source Code Repository |
 
 ---
 
@@ -186,9 +197,9 @@ Validate Request
         ↓
 Retrieve Conversation History
         ↓
-Send Context + Message to Gemini
+Send Context + Message to AI
         ↓
-Gemini Generates Response
+AI Generates Response
         ↓
 Save Conversation to MongoDB
         ↓
@@ -314,13 +325,13 @@ Start the application:
 npm start
 ```
 
-Then open the application in your browser:
+Open:
 
 ```text
 http://localhost:3000
 ```
 
-The application will connect to MongoDB Atlas and serve the React frontend through the Express server.
+The application connects to MongoDB Atlas and serves the React frontend through the Express server.
 
 ---
 
@@ -332,7 +343,7 @@ Build the React frontend for production:
 npm run build:client
 ```
 
-The production frontend will be generated inside:
+The production frontend is generated inside:
 
 ```text
 client/dist/
@@ -371,7 +382,21 @@ Example response:
 GET /chat/history
 ```
 
-This endpoint retrieves the stored conversation history.
+Returns the stored conversation history for the current session.
+
+### Health Check
+
+```http
+GET /health
+```
+
+Example response:
+
+```json
+{
+  "status": "ok"
+}
+```
 
 ---
 
@@ -385,7 +410,7 @@ The Gemini integration is implemented in:
 services/geminiService.js
 ```
 
-The API key is loaded through the environment configuration:
+The API key is loaded through:
 
 ```text
 GEMINI_API_KEY
@@ -483,9 +508,106 @@ Conversation history can be retrieved through:
 GET /chat/history
 ```
 
+The application uses a session ID stored in an HTTP-only cookie to associate a browser session with its conversation.
+
 ---
 
-## 🔐 16. Security & Reliability
+## 🚀 16. Render Deployment
+
+The application is configured for deployment on **Render**.
+
+### 🌐 Live Application
+
+```text
+https://ai-chatbot-mern-w1ao.onrender.com
+```
+
+### ❤️ Health Check
+
+```text
+https://ai-chatbot-mern-w1ao.onrender.com/health
+```
+
+### 📦 Render Configuration
+
+| Setting | Value |
+|---|---|
+| Service Type | Web Service |
+| Repository | `dayanand-surahonne/AI-CHATBOT-MERN` |
+| Branch | `master` |
+| Region | Singapore |
+| Plan | Free |
+| Build Command | `npm install && npm run build --prefix client` |
+| Start Command | `npm start` |
+
+### 🔑 Render Environment Variables
+
+Add the following variables under **Render → Environment → Environment Variables**:
+
+```text
+MONGODB_URI
+GEMINI_API_KEY
+OPENAI_API_KEY
+GROQ_API_KEY
+```
+
+Enter the **actual value only**.
+
+Correct:
+
+```text
+Key: MONGODB_URI
+Value: mongodb+srv://your-connection-string
+```
+
+Incorrect:
+
+```text
+Key: MONGODB_URI
+Value: MONGODB_URI=mongodb+srv://your-connection-string
+```
+
+Do the same for the AI API keys.
+
+### 🗄️ MongoDB Atlas
+
+Make sure your MongoDB Atlas cluster allows connections from your deployed Render service.
+
+For production, use appropriate MongoDB Atlas network access and security settings rather than exposing credentials publicly.
+
+### 🔄 Deployment Flow
+
+```text
+GitHub Repository
+       ↓
+Render
+       ↓
+Install Dependencies
+       ↓
+Build React Frontend
+       ↓
+Start Express Server
+       ↓
+Connect MongoDB Atlas
+       ↓
+Application Live
+```
+
+### ⚠️ Render Server Requirement
+
+The Express server must listen on the port supplied by Render:
+
+```js
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+---
+
+## 🔐 17. Security & Reliability
 
 The application includes several security and reliability features:
 
@@ -497,6 +619,7 @@ The application includes several security and reliability features:
 - ⏱️ AI API timeout handling
 - 🌐 MongoDB Atlas network access controls
 - 🔒 Protected API credentials
+- 🍪 HTTP-only session cookies
 - 📦 Production frontend build
 
 ### Security Recommendation
@@ -511,9 +634,11 @@ Secret tokens
 Private credentials
 ```
 
+If a secret is accidentally exposed, revoke or rotate it immediately.
+
 ---
 
-## 📊 17. Project Highlights
+## 📊 18. Project Highlights
 
 | Area | Implementation |
 |---|---|
@@ -524,15 +649,17 @@ Private credentials
 | AI Services | Gemini + OpenAI + Groq |
 | API Style | REST |
 | Context | Conversation History |
+| Sessions | HTTP-only Cookie |
 | Validation | Express Middleware |
 | Security | Environment Variables + Rate Limiting |
 | Storage | MongoDB |
 | Build | Vite Production Build |
+| Deployment | Render |
 | Version Control | Git + GitHub |
 
 ---
 
-## 🔮 18. Future Improvements
+## 🔮 19. Future Improvements
 
 - [ ] 🧠 Long-term user memory
 - [ ] 👤 User authentication
@@ -546,12 +673,11 @@ Private credentials
 - [ ] 🔊 AI voice output
 - [ ] 🌙 Dark / Light theme
 - [ ] 📱 Improved mobile experience
-- [ ] 🚀 Production deployment
 - [ ] 📊 Usage analytics
 
 ---
 
-## 🎓 19. Learning Outcomes
+## 🎓 20. Learning Outcomes
 
 This project demonstrates practical experience with:
 
@@ -570,12 +696,13 @@ This project demonstrates practical experience with:
 - Error handling
 - Environment variable management
 - Git and GitHub
+- Render deployment
 - Production frontend builds
 - Full-stack application architecture
 
 ---
 
-## 👨‍💻 20. Author
+## 👨‍💻 21. Author
 
 <div align="center">
 
@@ -593,7 +720,7 @@ Full-Stack Developer • AI/ML Enthusiast
 
 ---
 
-## ⭐ 21. Support
+## ⭐ 22. Support
 
 <div align="center">
 
@@ -601,7 +728,7 @@ If you found this project useful, please consider giving it a ⭐ on GitHub.
 
 ### 🤖 AI Chatbot
 
-**React • Node.js • Express.js • MongoDB Atlas • Google Gemini**
+**React • Node.js • Express.js • MongoDB Atlas • Google Gemini • Render**
 
 Built with ❤️ for learning, experimentation, and AI application development.
 
